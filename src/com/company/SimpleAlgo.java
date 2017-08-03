@@ -1100,6 +1100,7 @@ public class SimpleAlgo {
      * Given an array of prices of a stock where [i] is the price on day i
      * Find the maximum profit can be obtained by buying one stock and sell it later.
      * Dynamic Programming is used.
+     *
      * @param prices
      * @return
      */
@@ -1134,33 +1135,94 @@ public class SimpleAlgo {
     }
 
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        ArrayDeque<ChangedWord> queue = new ArrayDeque<>();
-        queue.addFirst(new ChangedWord(beginWord, -1));
-        int maxScore = 0;
-        for (String word : wordList) {
-            int score1 = computeScore(word, beginWord);
-            int socre2 = computeScore(word, endWord);
+        HashMap<String, HashSet<String>> adjacencyMap = new HashMap<>();
 
-        }
-    }
-
-    private int computeScore(String s1, String s2) {
-        int len = s1.length();
-        int score = 0;
-        char[] c1 = s1.toCharArray();
-        char[] c2 = s2.toCharArray();
+        //initialize the adjacency matrix
+        findNeighbourFor(beginWord, -1, wordList, adjacencyMap);
+        int len = wordList.size();
         for (int i = 0; i < len; ++i) {
-            score = c1[i] == c2[i] ? score + 1 : score;
+            findNeighbourFor(wordList.get(i), i, wordList, adjacencyMap);
         }
-        return score;
+
+        if (adjacencyMap.get(endWord) == null) {
+            return 0;
+        }
+        //run BFS to find "endWord"
+        HashSet<String> visitedWords = new HashSet<>(len);
+        ArrayDeque<Node> queue = new ArrayDeque<>(len);
+        queue.addFirst(new Node(beginWord, 1));
+        while (queue.size() > 0) {
+            Node node = queue.removeLast();
+
+            if (visitedWords.contains(node.word)) {
+                continue;
+            }
+            if (node.word.equals(endWord)) {
+                return node.distance;
+            }
+            visitedWords.add(node.word);
+            int dist = node.distance + 1;
+            HashSet<String> neighbours = adjacencyMap.get(node.word);
+            for (String neighbour : neighbours) {
+                queue.addFirst(new Node(neighbour, dist));
+            }
+        }
+        return 0;
+
     }
 
-    private class ChangedWord {
+    /**
+     * Find all the neighbours for "word" from "wordList".
+     * This function assumes the the words (and its neighbours) having lower index than "wordIndex"
+     * are already taken care of.
+     *
+     * @param word         the word for which we find neighbours
+     * @param wordIndex    the index of "word" in wordList, -1 if not in the list
+     * @param wordList     a list of word
+     * @param adjacencyMap graph structure
+     */
+    private void findNeighbourFor(String word, int wordIndex, List<String> wordList, HashMap<String, HashSet<String>> adjacencyMap) {
+//        HashSet<String> neighours = new HashSet<>(); //contain neighbours of "word"
+        HashSet<String> neighours = adjacencyMap.get(word);
+        neighours = neighours == null ? new HashSet<>() : neighours;
+        int len = wordList.size();
+        int wordLen = word.length();
+
+        for (int i = wordIndex + 1; i < len; ++i) {
+            String word2 = wordList.get(i); //potential neighbour
+            int diff = 0; //hold letter difference between "word" and potential neighbour
+            for (int j = 0; j < wordLen; ++j) {
+                diff = word.charAt(j) != word2.charAt(j) ? diff + 1 : diff;
+            }
+            if (diff == 1) {
+                neighours.add(word2);
+                HashSet<String> word2Neighbours = adjacencyMap.get(word2); //mutual inclusion
+                if (word2Neighbours != null) {
+                    word2Neighbours.add(word);
+                } else {
+                    word2Neighbours = new HashSet<>();
+                    word2Neighbours.add(word);
+                    adjacencyMap.put(word2, word2Neighbours);
+                }
+            }
+        }
+
+        adjacencyMap.put(word, neighours);
+    }
+
+    private class Node implements Comparable<Node> {
         String word;
-        int pos;
-        public ChangedWord(String word, int pos) {
+        int distance;
+
+        public Node(String word, int distance) {
             this.word = word;
-            this.pos = pos;
+            this.distance = distance;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return Integer.compare(this.distance, o.distance);
         }
     }
+
 }
