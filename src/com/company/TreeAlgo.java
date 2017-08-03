@@ -13,26 +13,6 @@ public class TreeAlgo {
 
 
 
-    /**
-     * Given a binary tree, return the inorder traversal of its nodes' values.
-     * @param root
-     * @return
-     */
-    public List<Integer> inorderTraversal(TreeNode root) {
-        ArrayList<Integer> l = new ArrayList<>();
-        inorderTraversal(root, l);
-        return l;
-    }
-
-    private void inorderTraversal(TreeNode node, List<Integer> l) {
-        if (node == null) {
-            return;
-        }
-
-        inorderTraversal(node.left, l);
-        l.add(node.val);
-        inorderTraversal(node.right, l);
-    }
 
     /**
      * Given a binary tree, return the inorder traversal of its nodes' values
@@ -40,11 +20,9 @@ public class TreeAlgo {
      * @param root
      * @return
      */
-    public List<Integer> inorderTraversalLoop(TreeNode root) {
-
+    public List<Integer> inorderTraversal(TreeNode root) {
         ArrayList<Integer> list = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
-        stack.push(root);
 
         TreeNode node = root;
         while (!stack.isEmpty() || node != null) {
@@ -173,6 +151,13 @@ public class TreeAlgo {
      * @param root
      */
     public void recoverTree(TreeNode root) {
+        //idea:
+        //visualizing each node.val as a vertical bar
+        //inorder traversal gives:
+        //     |
+        //   | |
+        // | | |
+        // if the bars are not in ascending order, then one of the bar (node) was swapped
         findSwappedNodes(root);
         int temp = first.val;
         first.val = second.val;
@@ -186,10 +171,10 @@ public class TreeAlgo {
 
         findSwappedNodes(node.left);
         if (prevNode != null && prevNode.val > node.val) {
-            if (first == null) {
+            if (first == null) { // first time encounter a bad node
                 first = prevNode;
                 second = node;
-            } else {
+            } else { // second time encounter a bad node
                 second = node;
                 return;
             }
@@ -269,6 +254,9 @@ public class TreeAlgo {
         while (!queue.isEmpty()) {
             ArrayList<Integer> list = new ArrayList<>();
             int len = queue.size();
+            // each iteration will clear the entire queue
+            // which holds the level that is being visited
+            // and refill the queue with the children of the level
             for (int i = 0; i < len; ++i) {
                 TreeNode node = queue.pollFirst();
                 list.add(node.val);
