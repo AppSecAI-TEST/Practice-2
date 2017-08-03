@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Created by tianqiliu on 2017-05-31.
@@ -1106,10 +1107,10 @@ public class SimpleAlgo {
      */
     public int maxProfitDP(int[] prices) {
 
-        int maxProfit = 0, minProfitSoFar = Integer.MAX_VALUE;
+        int maxProfit = 0, minBuyIn = Integer.MAX_VALUE;
         for (int i = 0; i < prices.length; ++i) {
-            minProfitSoFar = minProfitSoFar < prices[i] ? minProfitSoFar : prices[i];
-            int profit = prices[i] - minProfitSoFar;
+            minBuyIn = minBuyIn < prices[i] ? minBuyIn : prices[i];
+            int profit = prices[i] - minBuyIn;
             maxProfit = profit > maxProfit ? profit : maxProfit;
         }
         return maxProfit;
@@ -1134,95 +1135,34 @@ public class SimpleAlgo {
 //        return maxProfit;
     }
 
-    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        HashMap<String, HashSet<String>> adjacencyMap = new HashMap<>();
-
-        //initialize the adjacency matrix
-        findNeighbourFor(beginWord, -1, wordList, adjacencyMap);
-        int len = wordList.size();
-        for (int i = 0; i < len; ++i) {
-            findNeighbourFor(wordList.get(i), i, wordList, adjacencyMap);
-        }
-
-        if (adjacencyMap.get(endWord) == null) {
-            return 0;
-        }
-        //run BFS to find "endWord"
-        HashSet<String> visitedWords = new HashSet<>(len);
-        ArrayDeque<Node> queue = new ArrayDeque<>(len);
-        queue.addFirst(new Node(beginWord, 1));
-        while (queue.size() > 0) {
-            Node node = queue.removeLast();
-
-            if (visitedWords.contains(node.word)) {
-                continue;
-            }
-            if (node.word.equals(endWord)) {
-                return node.distance;
-            }
-            visitedWords.add(node.word);
-            int dist = node.distance + 1;
-            HashSet<String> neighbours = adjacencyMap.get(node.word);
-            for (String neighbour : neighbours) {
-                queue.addFirst(new Node(neighbour, dist));
+    public boolean wordBreak(String s, List<String> wordDict) {
+        HashMap<String, Integer> hashMap = new HashMap<>(wordDict.size());
+        for (String word : wordDict) {
+            int index = s.indexOf(word)
+            if (index > -1) {
+                hashMap.put(word, index);
             }
         }
-        return 0;
 
+        if (hashMap.size() == 0) {
+            return false;
+        }
+        Set<Entry<String, Integer>> entries = hashMap.entrySet();
+        for (Entry<String, Integer> entry : entries) {
+            if (isGoodWord(entry, hashMap, s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    /**
-     * Find all the neighbours for "word" from "wordList".
-     * This function assumes the the words (and its neighbours) having lower index than "wordIndex"
-     * are already taken care of.
-     *
-     * @param word         the word for which we find neighbours
-     * @param wordIndex    the index of "word" in wordList, -1 if not in the list
-     * @param wordList     a list of word
-     * @param adjacencyMap graph structure
-     */
-    private void findNeighbourFor(String word, int wordIndex, List<String> wordList, HashMap<String, HashSet<String>> adjacencyMap) {
-//        HashSet<String> neighours = new HashSet<>(); //contain neighbours of "word"
-        HashSet<String> neighours = adjacencyMap.get(word);
-        neighours = neighours == null ? new HashSet<>() : neighours;
-        int len = wordList.size();
-        int wordLen = word.length();
-
-        for (int i = wordIndex + 1; i < len; ++i) {
-            String word2 = wordList.get(i); //potential neighbour
-            int diff = 0; //hold letter difference between "word" and potential neighbour
-            for (int j = 0; j < wordLen; ++j) {
-                diff = word.charAt(j) != word2.charAt(j) ? diff + 1 : diff;
-            }
-            if (diff == 1) {
-                neighours.add(word2);
-                HashSet<String> word2Neighbours = adjacencyMap.get(word2); //mutual inclusion
-                if (word2Neighbours != null) {
-                    word2Neighbours.add(word);
-                } else {
-                    word2Neighbours = new HashSet<>();
-                    word2Neighbours.add(word);
-                    adjacencyMap.put(word2, word2Neighbours);
-                }
-            }
-        }
-
-        adjacencyMap.put(word, neighours);
+    private boolean isGoodWord(Entry<String, Integer> entry, HashMap<String, Integer> hashMap, String s) {
+        String word = entry.getKey();
+        int index = entry.getValue();
+        String s1 = s.substring(0, index);
+        String s2 = s.substring(index + word.length());
+        if (isGoodWord())
     }
 
-    private class Node implements Comparable<Node> {
-        String word;
-        int distance;
-
-        public Node(String word, int distance) {
-            this.word = word;
-            this.distance = distance;
-        }
-
-        @Override
-        public int compareTo(Node o) {
-            return Integer.compare(this.distance, o.distance);
-        }
-    }
 
 }

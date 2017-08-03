@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 
 /**
@@ -350,5 +351,35 @@ public class ListAlgo {
         return head;
 
     }
+
+    /**
+     * A linked list is given such that each node contains an additional random pointer
+     * which could point to any node in the list or null.
+     * @param head
+     * @return a deep copy of the list.
+     */
+    public RandomListNode copyRandomList(RandomListNode head) {
+        // key: pointer to an original node
+        // value: pointer to a copy containing/copying only the label of the original node
+        // i.e. the values are pointers pointing to copy-nodes that will later form the new list
+        HashMap<RandomListNode, RandomListNode> hashMap = new HashMap<>();
+        RandomListNode itr = head;
+        while (itr != null) {
+            hashMap.put(itr, new RandomListNode(itr.label));
+            itr = itr.next;
+        }
+
+        itr = head;
+        RandomListNode copy;
+        // link the copy-nodes together to form the new list
+        while (itr != null) {
+            copy = hashMap.get(itr); // get the copy of itr
+            copy.next = hashMap.get(itr.next); // find the copy of itr's "next" and let copy's "next" point to it
+            copy.random = hashMap.get(itr.random); // find the copy of itr's "random" and let copy's "random" point to it
+            itr = itr.next;
+        }
+        return hashMap.get(head);
+    }
+
 
 }
