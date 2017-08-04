@@ -1135,34 +1135,77 @@ public class SimpleAlgo {
 //        return maxProfit;
     }
 
+//    public boolean wordBreak(String s, List<String> wordDict) {
+//        HashSet<String> set = new HashSet<>();
+//        for (String word : wordDict) {
+//            if (s.indexOf(word) > -1) {
+//                set.add(word);
+//            }
+//        }
+//        if (set.size() == 0) {
+//            return false;
+//        }
+//        return wordBreak(s, set);
+//
+//    }
+//
+//    private boolean wordBreak(String s, HashSet<String> set) {
+//        for (String word : set) {
+//            int index = s.indexOf(word);
+//            if (index > -1) {
+//                String s1 = s.substring(0, index);
+//                String s2 = s.substring(index + word.length());
+//                if ((s1.length() == 0 || wordBreak(s1, set)) && (s2.length() == 0 || wordBreak(s2, set))) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
+
+    /**
+     * Determine if "s" can be tokenized into strings in "wordDict".
+     * Note: a token in "wordDict" can be used repeatedly
+     * @param s
+     * @param wordDict
+     * @return
+     */
     public boolean wordBreak(String s, List<String> wordDict) {
-        HashMap<String, Integer> hashMap = new HashMap<>(wordDict.size());
-        for (String word : wordDict) {
-            int index = s.indexOf(word)
-            if (index > -1) {
-                hashMap.put(word, index);
+        HashSet<String> hashSet = new HashSet<>(wordDict);
+        int len = s.length();
+        boolean[] t = new boolean[len + 1]; // t[i] indicates if s[0...i-1] can be broken into tokens
+        t[0] = true; // s[-1] is true
+        for (int i = 1; i < t.length; ++i) {
+            for (int j = 0; j < i; ++j) {
+                if (t[j] && hashSet.contains(s.substring(j, i))) {
+                    t[i] = true;
+                    break;
+                }
             }
         }
 
-        if (hashMap.size() == 0) {
-            return false;
-        }
-        Set<Entry<String, Integer>> entries = hashMap.entrySet();
-        for (Entry<String, Integer> entry : entries) {
-            if (isGoodWord(entry, hashMap, s)) {
-                return true;
-            }
-        }
-        return false;
-    }
+        return t[len];
 
-    private boolean isGoodWord(Entry<String, Integer> entry, HashMap<String, Integer> hashMap, String s) {
-        String word = entry.getKey();
-        int index = entry.getValue();
-        String s1 = s.substring(0, index);
-        String s2 = s.substring(index + word.length());
-        if (isGoodWord())
-    }
+//        boolean[] t = new boolean[len]; // records if s[0...i] can be broken into dictionary
+//        t[0] = hashSet.contains(s.substring(0, 1));
+//        for (int i = 1; i < len; ++i) {
+//            int ii = i + 1;
+//            if (hashSet.contains(s.substring(0, ii))) { //corner case: s[-1...j-1 && j...i]
+//                t[i] = true; //s[0...i] is good
+//            } else {
+//                for (int j = 1; j < ii; ++j) {
+//                    //is s[0...j-1] good and s[j...i] also good?
+//                    if (t[j -1] && hashSet.contains(s.substring(j, ii))) {
+//                        t[i] = true;
+//                        break;
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        return t[len - 1];
 
+    }
 
 }
