@@ -381,5 +381,53 @@ public class ListAlgo {
         return hashMap.get(head);
     }
 
+    /**
+     * find the node at which the intersection of two singly linked lists begins
+     * @param headA
+     * @param headB
+     * @return
+     */
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) {
+            return null;
+        }
+
+        // idea:
+        // move p1 and p2 at the same pace
+        // 1. if two lists have the same length
+        // when p1 meets p2, we are done
+        // 2. if two lists have different length,
+        // p1 and p2 have different distances to the intersection
+        // when p1 reaches the end, move it to the head of list2
+        // when p2 reaches the end, move it to the head of list1
+        // when p1 meets p2, they are at the intersection
+        // because
+        // e.g. len(list1) = 6, and len(list2) = 4
+        // when p2 reaches its end, we put p2 to list1 (which is a longer list)
+        // when p1 reaches its end, we put it to list2 (which is a shorter list)
+        // now they've both been through long and short lists,
+        // so they are equal distance to the intersection
+        // corner case: no intersection, need to track we switch both of them totally 2 times
+
+        ListNode p1 = headA;
+        ListNode p2 = headB;
+        int round = 0;
+        while (p1 != p2 && round < 3) {
+            p1 = p1.next;
+            p2 = p2.next;
+
+            if (p1 == null) {
+                ++round;
+                p1 = headB;
+            }
+            if (p2 == null) {
+                ++round;
+                p2 = headA;
+            }
+
+        }
+        return round < 3 ? p1 : null;
+    }
+
 
 }

@@ -1166,6 +1166,7 @@ public class SimpleAlgo {
     /**
      * Determine if "s" can be tokenized into strings in "wordDict".
      * Note: a token in "wordDict" can be used repeatedly
+     *
      * @param s
      * @param wordDict
      * @return
@@ -1206,6 +1207,24 @@ public class SimpleAlgo {
 //
 //        return t[len - 1];
 
+    }
+
+    // Given an array of integers that is already sorted in ascending order,
+    // find non-zero based positions of two numbers that add up to a specific target number.
+    public int[] twoSumSorted(int[] numbers, int target) {
+        int i = 0, j = numbers.length - 1;
+        while (i < j) {
+            int sum = numbers[i] + numbers[j];
+            if (sum == target) {
+                return new int[]{i + 1, j + 1};
+            }
+            if (sum < target) {
+                ++i;
+            } else {
+                --j;
+            }
+        }
+        return null;
     }
 
 }
