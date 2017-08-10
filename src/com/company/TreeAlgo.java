@@ -274,4 +274,28 @@ public class TreeAlgo {
 
     }
 
+    /**
+     * Given a binary tree,
+     * imagine yourself standing on the right side of it,
+     * @param root
+     * @return the values of the nodes you can see ordered from top to bottom.
+     */
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        rightSideView(root, list, 1);
+        return list;
+    }
+
+    private void rightSideView(TreeNode root, List<Integer> list, int depth) {
+        if (root == null) {
+            return;
+        }
+        if (depth > list.size()) {
+            list.add(root.val);
+        }
+        rightSideView(root.right, list, depth + 1);
+        rightSideView(root.left, list, depth + 1);
+
+    }
+
 }

@@ -1209,8 +1209,13 @@ public class SimpleAlgo {
 
     }
 
-    // Given an array of integers that is already sorted in ascending order,
-    // find non-zero based positions of two numbers that add up to a specific target number.
+    /**
+     * Given an array of integers that is already sorted in ascending order,
+     * find non-zero based positions of two numbers that add up to a specific target number.
+     * @param numbers
+     * @param target
+     * @return
+     */
     public int[] twoSumSorted(int[] numbers, int target) {
         int i = 0, j = numbers.length - 1;
         while (i < j) {
@@ -1225,6 +1230,80 @@ public class SimpleAlgo {
             }
         }
         return null;
+    }
+
+    /**
+     * Given a 2D grid of '1's and '0's, where '1' represents land and '0' represents water,
+     * find the number of islands in the grid.
+     * An island is horizontally and vertically connected lands.
+     *
+     * @param grid a 2D grid of land and water
+     * @return number of isalnds
+     */
+
+    private int gGridN, gGridM;
+    private char[][] gGrid;
+    public int numIslands(char[][] grid) {
+
+        // idea:
+        // if found a land, search around it until meet a water,
+        // and mark all the land connected to it as water
+
+        if (grid.length == 0) {
+            return 0;
+        }
+        int count = 0;
+        gGridN = grid.length;
+        gGridM = grid[0].length;
+        gGrid = grid;
+        for (int i = 0; i < gGridN; ++i) {
+            for (int j = 0; j < gGridM; ++j) {
+                if (grid[i][j] == '1') {
+                    fadeIsland(i, j);
+                    ++count;
+                }
+            }
+        }
+        return count;
+    }
+
+    private void fadeIsland(int i, int j) {
+        if (i < 0 || j < 0 || i >= gGridN || j >= gGridM || gGrid[i][j] != '1') {
+            return;
+        }
+        gGrid[i][j] = '0';
+
+        fadeIsland(i, j - 1);
+        fadeIsland(i, j + 1);
+        fadeIsland(i - 1, j);
+        fadeIsland(i + 1, j);
+
+    }
+
+    public int countPrimes(int n) {
+        // ideas:
+        // Do not stop at sqrt of the number i being tested.
+        // Use this number to find all other numbers = i * j where i * j < n
+        // i * j is clearly not a prime, so mark it and no need to test it
+        boolean[] notPrimes = new boolean[n];
+        int count = 0;
+        int product;
+        int j;
+        for (int i = 2; i < n; ++i) {
+            if (notPrimes[i]) {
+                continue;
+            }
+            ++count;
+
+            product = i << 1; //i * 2
+            j = 2;
+            while (product < n) {
+                notPrimes[product] = true;
+                product =  i * (++j);
+            }
+        }
+
+        return count;
     }
 
 }
