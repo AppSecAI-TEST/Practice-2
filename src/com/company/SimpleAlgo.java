@@ -1212,6 +1212,7 @@ public class SimpleAlgo {
     /**
      * Given an array of integers that is already sorted in ascending order,
      * find non-zero based positions of two numbers that add up to a specific target number.
+     *
      * @param numbers
      * @param target
      * @return
@@ -1243,6 +1244,7 @@ public class SimpleAlgo {
 
     private int gGridN, gGridM;
     private char[][] gGrid;
+
     public int numIslands(char[][] grid) {
 
         // idea:
@@ -1299,11 +1301,50 @@ public class SimpleAlgo {
             j = 2;
             while (product < n) {
                 notPrimes[product] = true;
-                product =  i * (++j);
+                product = i * (++j);
             }
         }
 
         return count;
+    }
+
+    /**
+     * Find the k largest element in the given array
+     * where 1 <= k <= len(array)
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int findKthLargest(int[] nums, int k) {
+        //sorting is FASTER !!!
+//        Arrays.sort(nums);
+//        return nums[nums.length - k];
+
+        // idea:
+        // when using a priority queue, no need a max heap
+        // just keep in mind that the queue should have at most k element,
+        // and after having k element, just starts popping,
+        // and the k largest will be the min in the heap
+        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>(k);
+        int i = 0;
+        if (k < nums.length) { // optimize so don't need to do the unnecessary "if" n-k times
+            while (i < k) {
+                priorityQueue.offer(nums[i++]);
+            }
+            while (i < nums.length) {
+                priorityQueue.offer(nums[i++]); // i = k + 1 ... len - 1
+                priorityQueue.poll();
+            }
+        } else {
+            while (i < nums.length) {
+                priorityQueue.offer(nums[i++]);
+                if (i > k) {
+                    priorityQueue.poll();
+                }
+            }
+        }
+        return priorityQueue.peek();
     }
 
 }

@@ -199,6 +199,7 @@ public class ListAlgo {
 
         return mergeKLists(lists, 0, lists.length - 1);
     }
+
     private ListNode mergeKLists(ListNode[] lists, int start, int end) {
         if (start == end) {
             return lists[start];
@@ -252,6 +253,7 @@ public class ListAlgo {
      * Given a linked list, swap every two adjacent nodes and return its head
      * using recursion (faster).
      * e.g. 1->2 -> 3->4 to 2->1 -> 4->3
+     *
      * @param head
      * @return
      */
@@ -264,7 +266,7 @@ public class ListAlgo {
         n1.next = n2.next;
         n2.next = n1;
         head = n2;
-        n1.next= swapPairs2(n1.next);
+        n1.next = swapPairs2(n1.next);
         return head;
 
     }
@@ -272,6 +274,7 @@ public class ListAlgo {
     /**
      * Given a linked list, swap every two adjacent nodes and return its head.
      * e.g. 1->2 -> 3->4 to 2->1 -> 4->3
+     *
      * @param head
      * @return
      */
@@ -306,6 +309,7 @@ public class ListAlgo {
      * Given a list, rotate the list to the right by k places, where k is non-negative.
      * i.e. put the last node to the head of the list, and
      * do so k times
+     *
      * @param head
      * @param k
      * @return
@@ -355,6 +359,7 @@ public class ListAlgo {
     /**
      * A linked list is given such that each node contains an additional random pointer
      * which could point to any node in the list or null.
+     *
      * @param head
      * @return a deep copy of the list.
      */
@@ -383,6 +388,7 @@ public class ListAlgo {
 
     /**
      * find the node at which the intersection of two singly linked lists begins
+     *
      * @param headA
      * @param headB
      * @return
@@ -429,5 +435,89 @@ public class ListAlgo {
         return round < 3 ? p1 : null;
     }
 
+    /**
+     * Reverse a singly linked list without recursion
+     *
+     * @param head
+     * @return
+     */
+    public ListNode reverseList(ListNode head) {
+        ListNode fast = head, middle = head, slow = null;
+        while (fast != null) {
+            fast = fast.next;
+            middle.next = slow;
+            slow = middle;
+            middle = fast;
+        }
+        return slow;
+    }
+
+    /**
+     * Reverse a singly linked list with recursion
+     *
+     * @param head
+     * @return
+     */
+    ListNode newHead = null;
+
+    public ListNode reverseListRecursion(ListNode head) {
+        reverseNode(head, null);
+        return newHead;
+    }
+
+    private void reverseNode(ListNode node, ListNode prevNode) {
+        if (node == null) {
+            newHead = prevNode;
+            return;
+        }
+        reverseNode(node.next, node); // reverse the rest of the list
+        node.next = prevNode; // reverse me
+    }
+
+    /**
+     * Determine if the given list is palindrome,
+     * using O(1) space.
+     *
+     * @param head
+     * @return
+     */
+    public boolean isPalindrome(ListNode head) {
+        
+        // idea:
+        // reverse half of the list,
+        // and compare the two halves
+        if (head == null || head.next == null) {
+            return true;
+        }
+
+        // slow runs twice slow as fast,
+        // so when fast reaches the end, slow reaches the middle
+        ListNode fast = head, slow = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+
+        if (fast != null) { // odd number of nodes, slow is right in the middle
+            slow = slow.next;
+        }
+
+        //reverse the second half of the list
+        slow = reverseList(slow);
+        fast = head;
+        ListNode temp = slow;
+        while (slow != null) {
+            if (fast.val != slow.val) {
+                return false;
+            }
+            fast = fast.next;
+            slow = slow.next;
+        }
+
+        //restore the list
+        reverseList(temp);
+
+        return true;
+    }
 
 }
